@@ -12,15 +12,13 @@ let center = ref([54, -2])
 let nodes: any = ref({ latlngs: [], color: 'green' });
 store.updateDistance(nodes);
 
-console.log("nodes: ", nodes);
-
-function addNode(event: any) {
+const addNode = (event: any) => {
     nodes.value.latlngs = [...nodes.value.latlngs, event.latlng];
     console.log(event.latlng);
     store.updateDistance(nodes);
 }
 
-function removeNode(event: any) {
+const removeNode = (event: any) => {
     console.log(event.latlng);
     nodes.value.latlngs = nodes.value.latlngs.filter((m: any) => m.lat !== event.latlng.lat && m.lng !== event.latlng.lng)
 
@@ -33,7 +31,7 @@ function removeNode(event: any) {
     <main>
         <l-map ref="map" v-model:zoom="zoom" v-model:center="center" :useGlobalLeaflet="false" @click="addNode">
             <l-tile-layer url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png" layer-type="base"
-                name="Stadia Maps Basemap"></l-tile-layer>
+                name="Stadia Maps Basemap" attribution="© Stadia Maps | © OpenMapTiles | © OpenStreetMap"></l-tile-layer>
             <l-marker v-for="node in nodes.latlngs" :lat-lng="node" @click="removeNode"></l-marker>
             <l-polyline :lat-lngs="nodes.latlngs" :color="nodes.color"></l-polyline>
         </l-map>

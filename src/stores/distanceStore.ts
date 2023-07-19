@@ -5,8 +5,19 @@ export const useDistanceStore = defineStore("distance", {
         return {
             distance: 0,
             displayDistance: "0",
-            unit: "kilometer",
-            fractionDigits: 0,
+            unit: {
+                value: "kilometer",
+                displayName: "Kilometres",
+                short: "km",
+            },
+            fractionDigits: 2,
+            unitOptions: [
+                { value: "foot", displayName: "Feet", short: "ft" },
+                { value: "yard", displayName: "Yards", short: "yd" },
+                { value: "mile", displayName: "Miles", short: "mi" },
+                { value: "meter", displayName: "Metres", short: "m" },
+                { value: "kilometer", displayName: "Kilometres", short: "km" },
+            ],
         };
     },
     actions: {
@@ -24,32 +35,22 @@ export const useDistanceStore = defineStore("distance", {
         },
 
         updateDisplayDistance() {
-            const nf = new Intl.NumberFormat("en-GB", {
-                style: "unit",
-                unit: this.unit,
-                unitDisplay: "short",
-                maximumFractionDigits: this.fractionDigits,
-            });
+            const nf = new Intl.NumberFormat("en-GB");
 
-            switch (this.unit) {
+            switch (this.unit.value) {
                 case "foot":
-                    this.fractionDigits = 0;
                     this.displayDistance = nf.format(this.distance * 3.281);
                     break;
                 case "yard":
-                    this.fractionDigits = 0;
                     this.displayDistance = nf.format(this.distance * 1.094);
                     break;
                 case "mile":
-                    this.fractionDigits = 2;
                     this.displayDistance = nf.format(this.distance / 1609);
                     break;
                 case "meter":
-                    this.fractionDigits = 0;
                     this.displayDistance = nf.format(this.distance);
                     break;
                 case "kilometer":
-                    this.fractionDigits = 2;
                     this.displayDistance = nf.format(this.distance / 1000);
                     break;
                 default:
