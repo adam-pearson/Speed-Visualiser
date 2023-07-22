@@ -5,10 +5,15 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import SidePanelDistanceDisplay from './SidePanelDistanceDisplay.vue';
 import SidePanelFooter from './SidePanelFooter.vue';
 
-let isHidden: any = ref(false);
-let listOfItems: any = ref([]);
+import speedData from '../assets/speedData.json';
+import { useDistanceStore } from "../stores/distanceStore";
 
-let testItems: any = ref([{ name: "Walking" }, { name: "Running" }, { name: "Lamborghini Aventador" }, { name: "Bicycle" }, { name: "Motorbike" }]);
+const store = useDistanceStore();
+
+let isHidden: any = ref(false);
+let selectedItems: any = ref([]);
+
+let items: any = ref(speedData);
 
 const toggleSidePanel = () => {
     console.log("toggled");
@@ -17,15 +22,16 @@ const toggleSidePanel = () => {
 }
 
 const addItem = () => {
-    if (testItems.value.length > 0) {
-        listOfItems.value = [...listOfItems.value, testItems.value.pop()];
-        console.log("adding item");
+    if (items.value.length > 0) {
+        const random = items.value[Math.floor(Math.random() * items.value.length)];
+        selectedItems.value = [...selectedItems.value, random];
+        console.log("adding item: ", random);
     }
 }
 
 const removeItem = (item: any) => {
-    listOfItems.value = listOfItems.value.filter((x: { name: string }) => x.name !== item.name);
-    testItems.value = [...testItems.value, item];
+    selectedItems.value = selectedItems.value.filter((x: { name: string }) => x.name !== item.name);
+    items.value = [...items.value, item];
 }
 
 </script>
@@ -44,12 +50,14 @@ const removeItem = (item: any) => {
                     <SidePanelDistanceDisplay />
                 </div>
 
-                <div class="mb-4">
-                    <div v-for="item of listOfItems" class="logo w-full h-16 bg-green-700 mb-4">
-                        <button class="w-full h-full" @click="removeItem(item)">{{ item.name }}</button>
+                <div class="mb-4 overflow-y-auto">
+                    <div v-for="item of selectedItems" class="logo w-full h-16 bg-green-700 mb-4">
+                        <button class="w-full h-full" @click="removeItem(item)">
+                            {{ item.name }} - {{ store.getDisplayTime(item) }}
+                        </button>
                     </div>
 
-                    <button v-if="testItems.length > 0" class="w-full h-16 bg-blue-50" @click="addItem">
+                    <button v-if="items.length > 0" class="w-full h-16 bg-blue-50" @click="addItem">
                         <span class="icon px-4">
                             <font-awesome-icon :icon="['fas', 'plus']" />
                         </span>
